@@ -1,11 +1,23 @@
 package com.coolweather.app.util;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
 import com.coolweather.app.db.CoolWeatherDB;
 import com.coolweather.app.model.City;
 import com.coolweather.app.model.County;
 import com.coolweather.app.model.Province;
+import com.coolweather.app.model.WeatherInfo;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 /**
  * Created by HeKongyang on 2017/9/10.
  */
@@ -83,5 +95,42 @@ public class Utility {
             }
         }
         return false;
+    }
+
+    public static void handleWeatherResponse(Context context, String response)
+    {
+        try {
+            JSONObject json = new JSONObject(response);
+            JSONObject jsonWeatherInfo = json.getJSONObject("weatherinfo");
+            WeatherInfo weatherInfo = new WeatherInfo();
+            weatherInfo.setCity(jsonWeatherInfo.getString("city"));
+            weatherInfo.setCityId(jsonWeatherInfo.getString("cityId"));
+            weatherInfo.setTem1(jsonWeatherInfo.getString("tem1"));
+            weatherInfo.setTem2(jsonWeatherInfo.getString("tem2"));
+            weatherInfo.setWeather(jsonWeatherInfo.getString("weather"));
+            weatherInfo.setImg1(jsonWeatherInfo.getString("img1"));
+            weatherInfo.setImg2(jsonWeatherInfo.getString("img2"));
+            weatherInfo.setPtime(jsonWeatherInfo.getString("ptime"));
+            saveWeatherInfo(context, weatherInfo);
+        } catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+
+    }
+
+    private static void saveWeatherInfo(Context context, WeatherInfo weatherInfo)
+    {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy年M月d日", Locale.CHINA);
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
+        editor.putBoolean("city_selected", true);
+        editor.putString("city", weatherInfo.getCity());
+        editor.putString("city_id", weatherInfo.getCityId());
+        editor.putString("tem1", weatherInfo.getTem1());
+        editor.putString("tem2", weatherInfo.getTem2());
+        editor.putString("weather", weatherInfo.getWeather());
+        editor.putString("ptime", weatherInfo.getPtime());
+        editor.putString("current_date", dateFormat.format(new Date()));
+        editor.commit();
     }
 }

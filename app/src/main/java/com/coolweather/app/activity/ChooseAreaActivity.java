@@ -1,8 +1,11 @@
 package com.coolweather.app.activity;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
-import android.support.v7.app.AppCompatActivity;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
@@ -24,7 +27,7 @@ import com.coolweather.app.util.Utility;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChooseAreaActivity extends AppCompatActivity {
+public class ChooseAreaActivity extends Activity {
 
     private static final int LEVEL_PROVINCE = 0;
     private static final int LEVEL_CITY = 1;
@@ -56,10 +59,21 @@ public class ChooseAreaActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean isCitySelected = preferences.getBoolean("city_selected", false);
+        if (isCitySelected)
+        {
+            Intent intent = new Intent(this, WeatherActivity.class);
+            startActivity(intent);
+            finish();
+            return;
+        }
+        //取消标题
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.choose_area);
         listView = (ListView) findViewById(R.id.list_view);
         titleText = (TextView) findViewById(R.id.title_text);
+        coolWeatherDB = CoolWeatherDB.getInstence(this);
         adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,dataList);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -69,11 +83,23 @@ public class ChooseAreaActivity extends AppCompatActivity {
                 {
                     selectedProvince = provinceList.get(position);
                     queryCities();
-                }
-                else if (currentLevel == LEVEL_CITY)
+                } else if (currentLevel == LEVEL_CITY)
                 {
                     selectedCity = cityList.get(position);
                     queryCounties();
+                } else if (currentLevel == LEVEL_COUNTY)
+                {
+                    SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(ChooseAreaActivity.this).edit();
+                    editor.putBoolean("city_selected", true);
+                    editor.commit();
+                    selectedCounty = countyList.get(position);
+                    String countyCode = selectedCounty.getCountyCode();
+                    String countyName = selectedCounty.getCountyName();
+                    Intent intent = new Intent(ChooseAreaActivity.this, WeatherActivity.class);
+                    intent.putExtra("county_code", countyCode);
+                    intent.putExtra("county_name", countyName);
+                    startActivity(intent);
+                    finish();
                 }
             }
         });
@@ -225,7 +251,6 @@ public class ChooseAreaActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
         if (currentLevel == LEVEL_COUNTY)
         {
             queryCities();
@@ -234,7 +259,8 @@ public class ChooseAreaActivity extends AppCompatActivity {
         {
             queryProvinces();
         }
-        else {
+        else
+        {
             finish();
         }
     }
