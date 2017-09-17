@@ -39,6 +39,7 @@ public class ChooseAreaActivity extends Activity {
     private ArrayAdapter<String> adapter;
     private CoolWeatherDB coolWeatherDB;
     private List<String> dataList = new ArrayList<String>();
+    private boolean isFromWeatherActivity = false;
 
     //省列表
     private List<Province> provinceList;
@@ -59,9 +60,10 @@ public class ChooseAreaActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        isFromWeatherActivity = getIntent().getBooleanExtra("from_weather_activety", false);
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean isCitySelected = preferences.getBoolean("city_selected", false);
-        if (isCitySelected)
+        if (isCitySelected && !isFromWeatherActivity)
         {
             Intent intent = new Intent(this, WeatherActivity.class);
             startActivity(intent);
@@ -261,6 +263,11 @@ public class ChooseAreaActivity extends Activity {
         }
         else
         {
+            if (isFromWeatherActivity)
+            {
+                Intent i = new Intent(this, WeatherActivity.class);
+                startActivity(i);
+            }
             finish();
         }
     }
