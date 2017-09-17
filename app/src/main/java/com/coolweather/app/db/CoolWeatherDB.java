@@ -14,18 +14,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * 数据库操作
  * Created by HeKongyang on 2017/9/10.
  */
 public class CoolWeatherDB {
 
-    /**
-     * 数据库名称
-     */
+    //数据库名称
     public static final String DB_NAME = "cool_weather";
 
-    /**
-     * 数据库版本
-     */
+    //数据库版本
     public static int VERSION = 1;
 
     private static CoolWeatherDB coolWeatherDB;

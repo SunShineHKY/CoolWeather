@@ -7,6 +7,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 /**
+ * 网络操作工具类
  * Created by HeKongyang on 2017/9/10.
  */
 public class HttpUtil {
@@ -25,12 +26,16 @@ public class HttpUtil {
                     conn.setConnectTimeout(8000);
                     InputStream in = conn.getInputStream();
                     BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-                    StringBuilder response = new StringBuilder();
+                    StringBuffer response = new StringBuffer();
                     String line;
                     while ((line = reader.readLine()) != null)
                     {
                         response.append(line);
                     }
+
+                    /**
+                     * 调用接口处理从服务器返回的数据
+                     */
                     if (listener != null)
                     {
                         listener.onFinish(response.toString());

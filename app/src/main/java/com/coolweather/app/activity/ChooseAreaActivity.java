@@ -60,12 +60,17 @@ public class ChooseAreaActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        isFromWeatherActivity = getIntent().getBooleanExtra("from_weather_activety", false);
+        isFromWeatherActivity = getIntent().getBooleanExtra("from_weather_activity", false);
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean isCitySelected = preferences.getBoolean("city_selected", false);
         if (isCitySelected && !isFromWeatherActivity)
         {
+            SharedPreferences preferences1 = PreferenceManager.getDefaultSharedPreferences(this);
+            String countyCode = preferences1.getString("county_code", "");
+            String countyName = preferences1.getString("county_name", "");
             Intent intent = new Intent(this, WeatherActivity.class);
+            intent.putExtra("county_code", countyCode);
+            intent.putExtra("county_name", countyName);
             startActivity(intent);
             finish();
             return;
@@ -91,12 +96,14 @@ public class ChooseAreaActivity extends Activity {
                     queryCounties();
                 } else if (currentLevel == LEVEL_COUNTY)
                 {
-                    SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(ChooseAreaActivity.this).edit();
-                    editor.putBoolean("city_selected", true);
-                    editor.commit();
                     selectedCounty = countyList.get(position);
                     String countyCode = selectedCounty.getCountyCode();
                     String countyName = selectedCounty.getCountyName();
+                    SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(ChooseAreaActivity.this).edit();
+                    editor.putBoolean("city_selected", true);
+                    editor.putString("county_code", countyCode);
+                    editor.putString("county_name", countyName);
+                    editor.commit();
                     Intent intent = new Intent(ChooseAreaActivity.this, WeatherActivity.class);
                     intent.putExtra("county_code", countyCode);
                     intent.putExtra("county_name", countyName);
@@ -178,7 +185,7 @@ public class ChooseAreaActivity extends Activity {
         else {
             address = "http://www.weather.com.cn/data/list3/city.xml";
         }
-        showProgressDialog();
+        showProgressDialog("正在加载...");
         HttpUtil.sendHttpRequest(address, new HttpCallBackListener() {
             @Override
             public void onFinish(String response) {
@@ -232,14 +239,14 @@ public class ChooseAreaActivity extends Activity {
         });
     }
 
-    private void showProgressDialog()
+    private void showProgressDialog(String message)
     {
         if (progressDialog == null)
         {
             progressDialog = new ProgressDialog(this);
-            progressDialog.setMessage("正在加载...");
-            progressDialog.setCanceledOnTouchOutside(false);
         }
+        progressDialog.setMessage(message);
+        progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.show();
     }
 

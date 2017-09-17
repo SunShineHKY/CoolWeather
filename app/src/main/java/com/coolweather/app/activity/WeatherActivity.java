@@ -1,11 +1,9 @@
 package com.coolweather.app.activity;
 
 import android.app.Activity;
-import android.app.DownloadManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -24,7 +22,7 @@ public class WeatherActivity extends Activity implements View.OnClickListener{
 
     private LinearLayout weatherInfoLayout;
 
-    private TextView cityName;
+    private TextView cityNameText;
     private TextView tem1;
     private TextView tem2;
     private TextView weatherDesp;
@@ -42,7 +40,7 @@ public class WeatherActivity extends Activity implements View.OnClickListener{
 
         weatherInfoLayout = (LinearLayout) findViewById(R.id.weather_info_layout);
 
-        cityName = (TextView) findViewById(R.id.city_name);
+        cityNameText = (TextView) findViewById(R.id.city_name);
         tem1 = (TextView) findViewById(R.id.temp1);
         tem2 = (TextView) findViewById(R.id.temp2);
         publish = (TextView) findViewById(R.id.publish_text);
@@ -51,11 +49,13 @@ public class WeatherActivity extends Activity implements View.OnClickListener{
         switchCity = (Button) findViewById(R.id.switch_city);
         refreshWeather = (Button) findViewById(R.id.refresh_weather);
         String countyCode = getIntent().getStringExtra("county_code");
+        String countyName = getIntent().getStringExtra("county_name");
+        cityNameText.setText(countyName);
         if (!TextUtils.isEmpty(countyCode))
         {
             publish.setText("同步中");
             weatherInfoLayout.setVisibility(View.INVISIBLE);
-            cityName.setVisibility(View.INVISIBLE);
+           //cityNameText.setVisibility(View.INVISIBLE);
             queryWeatherCode(countyCode);
         }
         else
@@ -164,18 +164,17 @@ public class WeatherActivity extends Activity implements View.OnClickListener{
         });
     }
 
-    //ok
     private void showWeather()
     {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        cityName.setText(prefs.getString("city", ""));
+        cityNameText.setText(prefs.getString("city", ""));
         tem1.setText(prefs.getString("tem1", ""));
         tem2.setText(prefs.getString("tem2", ""));
         weatherDesp.setText(prefs.getString("weather", ""));
         publish.setText("今天"+prefs.getString("ptime", "")+"发布");
         currentDate.setText(prefs.getString("current_date", ""));
         weatherInfoLayout.setVisibility(View.VISIBLE);
-        cityName.setVisibility(View.VISIBLE);
+        cityNameText.setVisibility(View.VISIBLE);
 
         Intent i = new Intent(this, AutoUpdateService.class);
         startService(i);

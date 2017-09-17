@@ -1,6 +1,6 @@
 package com.coolweather.app.model;
-
 /**
+ * 省份
  * Created by HeKongyang on 2017/9/10.
  */
 public class Province {

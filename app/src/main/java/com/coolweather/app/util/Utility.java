@@ -19,6 +19,7 @@ import java.util.Date;
 import java.util.Locale;
 
 /**
+ * 数据解析处理
  * Created by HeKongyang on 2017/9/10.
  */
 public class Utility {
@@ -104,9 +105,9 @@ public class Utility {
             JSONObject jsonWeatherInfo = json.getJSONObject("weatherinfo");
             WeatherInfo weatherInfo = new WeatherInfo();
             weatherInfo.setCity(jsonWeatherInfo.getString("city"));
-            weatherInfo.setCityId(jsonWeatherInfo.getString("cityId"));
-            weatherInfo.setTem1(jsonWeatherInfo.getString("tem1"));
-            weatherInfo.setTem2(jsonWeatherInfo.getString("tem2"));
+            weatherInfo.setCityId(jsonWeatherInfo.getString("cityid"));
+            weatherInfo.setTem1(jsonWeatherInfo.getString("temp1"));
+            weatherInfo.setTem2(jsonWeatherInfo.getString("temp2"));
             weatherInfo.setWeather(jsonWeatherInfo.getString("weather"));
             weatherInfo.setImg1(jsonWeatherInfo.getString("img1"));
             weatherInfo.setImg2(jsonWeatherInfo.getString("img2"));
@@ -119,6 +120,11 @@ public class Utility {
 
     }
 
+    /**
+     * 保存天气数据到Preference中
+     * @param context
+     * @param weatherInfo
+     */
     private static void saveWeatherInfo(Context context, WeatherInfo weatherInfo)
     {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy年M月d日", Locale.CHINA);

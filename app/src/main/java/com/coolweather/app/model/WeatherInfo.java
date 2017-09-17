@@ -1,17 +1,32 @@
 package com.coolweather.app.model;
-
 /**
+ * 天气信息
  * Created by HeKongyang on 2017/9/12.
  */
 public class WeatherInfo {
 
+    //城市(包括县城)名称
     private String city;
+
+    //城市对应的天气代号
     private String cityId;
+
+    //最低温度
     private String tem1;
+
+    //最高温度
     private String tem2;
+
+    //天气描述
     private String weather;
+
+    //今日天气对应的图片1
     private String img1;
+
+    //今日天气对应的图片2
     private String img2;
+
+    //发布时间
     private String ptime;
 
     public String getCity() {
